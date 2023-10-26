@@ -1,9 +1,8 @@
 # Changelog
 
 ## [unreleased]
-
 ### Added
-...
+- `Context::make_texture` method
 
 ### Changed
 ...

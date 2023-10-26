@@ -15,15 +15,13 @@ use image::RgbaImage;
 async fn run() {
     let context = g2d::Context::new().await;
 
-    // Create the blank texture
-    let texture = context.make_blank_texture(Dimension::new(16, 16));
-    let graphics = texture.graphics();
-
     let time_start = Instant::now();
 
     let data = [255; 16 * 16 * Rgba::SIZE]; // blank white texture
 
-    graphics.overwrite_pixel_data(&data);
+    // Create the blank texture
+    let texture = context.make_texture(Dimension::new(16, 16), &data);
+    let graphics = texture.graphics();
 
     // // Write pixels
     // graphics

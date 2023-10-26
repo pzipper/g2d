@@ -86,4 +86,11 @@ impl Context {
 
         Texture::from_raw_parts(self, self.wgpu_device().create_texture(&texture_desc))
     }
+
+    /// Creates a texture pre-initialized with the provided data.
+    pub fn make_texture(&self, size: Dimension, data: &[u8]) -> Texture {
+        let texture = self.make_blank_texture(size);
+        texture.graphics().overwrite_pixel_data(data);
+        texture
+    }
 }
