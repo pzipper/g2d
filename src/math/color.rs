@@ -1,5 +1,7 @@
+use std::fmt::Debug;
+
 /// A color with 4 channels: red, green, blue and alpha.
-#[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(C)]
 pub struct Rgba {
     pub red: u8,
@@ -49,9 +51,19 @@ impl Rgba {
         unsafe { std::slice::from_raw_parts(self as *const Self as *const u8, 4) }
     }
 
-    /// Creates a slice of this [Rgba]'s bytes.
+    /// Creates a mutable slice of this [Rgba]'s bytes.
     #[inline]
     pub fn as_mut_slice(&mut self) -> &mut [u8] {
         unsafe { std::slice::from_raw_parts_mut(self as *mut Self as *mut u8, 4) }
+    }
+}
+
+impl Debug for Rgba {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Rgba({:02}, {:02}, {:02}, {:02})",
+            self.red, self.green, self.blue, self.alpha
+        )
     }
 }

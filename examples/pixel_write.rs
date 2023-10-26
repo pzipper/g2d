@@ -6,8 +6,10 @@
 //! - Fills the texture with white pixels.
 //! - Fills
 
+use std::time::Instant;
+
 use futures::executor::block_on;
-use g2d::math::Dimension;
+use g2d::math::{Dimension, Rgba};
 use image::RgbaImage;
 
 async fn run() {
@@ -17,19 +19,41 @@ async fn run() {
     let texture = context.make_blank_texture(Dimension::new(16, 16));
     let graphics = texture.graphics();
 
+    let time_start = Instant::now();
+
     // Write pixels
     graphics
         .pixels_mut(|mut pixels| {
-            // fill with white
-            pixels.rows_mut().for_each(|row| row.fill(255));
+            pixels.rows_mut().for_each(|row| row.fill(255))
+
+            // pixels.set_color(0, 0, Rgba::BLACK);
+            // pixels.set_color(1, 0, Rgba::WHITE);
+            // pixels.set_color(2, 0, Rgba::BLACK);
+            // pixels.set_color(1, 1, Rgba::BLACK);
+
+            // // Fill with white
+            // pixels.pixels_mut().enumerate().for_each(|(idx, pixel)| {
+            //     println!("TEST: {} (color: {:?}", idx, pixel);
+            //     *pixel = Rgba::WHITE
+            // })
+
+            // for pixel in pixels.pixels() {
+            //     println!("{:?}", pixel);
+            // }
         })
         .await;
 
     // Read pixels
-    let pixels = graphics.pixels_mut(|pixels| pixels.to_vec()).await;
+    let pixels = graphics.pixels().await;
+
+    let time_elapsed = time_start.elapsed();
+    println!(
+        "Elapsed: {}ms",
+        time_elapsed.as_nanos() as f64 / 1_000_000f64
+    );
 
     // Write image
-    RgbaImage::from_raw(16, 16, pixels)
+    RgbaImage::from_raw(16, 16, pixels.to_vec())
         .unwrap()
         .save("test.png")
         .unwrap();
