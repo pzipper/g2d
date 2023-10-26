@@ -71,7 +71,8 @@ impl<'a> Graphics<'a> {
     /// texture on the GPU.
     ///
     /// NOTE: this method should be used sparingly as it moves data to and from the GPU, which can
-    ///       be computationally expensive.
+    ///       be computationally expensive.  You should only use this method if you need to update
+    ///       individual pixels of a texture.
     pub async fn update_pixels<T>(&self, mut callback: impl FnMut(PixelsMut) -> T) -> T {
         let buffer_row_width_bytes =
             self.wgpu_texture()
@@ -120,5 +121,31 @@ impl<'a> Graphics<'a> {
         );
 
         return_value
+    }
+
+    /// Overwrites the entire pixel data of the texture.
+    ///
+    /// # Panics
+    /// Panics if the provided data is not the correct size.  (`Rgba::SIZE *width * height`)
+    pub fn overwrite_pixel_data(&self, data: &[u8]) {
+        assert_eq!(
+            data.len(),
+            self.texture().dimension().area() as usize * Rgba::SIZE
+        );
+
+        self.context().wgpu_queue().write_texture(
+            self.wgpu_texture().as_image_copy(),
+            &data,
+            wgpu::ImageDataLayout {
+                offset: 0,
+                bytes_per_row: Some(Rgba::SIZE as u32 * self.wgpu_texture().width()),
+                rows_per_image: Some(self.wgpu_texture().height()),
+            },
+            Extent3d {
+                width: self.wgpu_texture().width(),
+                height: self.wgpu_texture().height(),
+                depth_or_array_layers: 1,
+            },
+        );
     }
 }

@@ -6,3 +6,4 @@
 - refactor: optimize `Graphics::update_pixels`
 - feat: Add `Graphics::pixels` method and `Pixels` type
 - refactor: ([#1](https://github.com/pzipper/g2d/issues/1)) Make `Graphics` use a `&Texture` rather than a `&wgpu::Texture`
+- feat: Add `Graphics::overwrite_pixel_data`

@@ -9,7 +9,7 @@
 use std::time::Instant;
 
 use futures::executor::block_on;
-use g2d::math::Dimension;
+use g2d::math::{Dimension, Rgba};
 use image::RgbaImage;
 
 async fn run() {
@@ -21,27 +21,31 @@ async fn run() {
 
     let time_start = Instant::now();
 
-    // Write pixels
-    graphics
-        .update_pixels(|mut pixels| {
-            pixels.rows_mut().for_each(|row| row.fill(255))
+    let data = [255; 16 * 16 * Rgba::SIZE]; // blank white texture
 
-            // pixels.set_color(0, 0, Rgba::BLACK);
-            // pixels.set_color(1, 0, Rgba::WHITE);
-            // pixels.set_color(2, 0, Rgba::BLACK);
-            // pixels.set_color(1, 1, Rgba::BLACK);
+    graphics.overwrite_pixel_data(&data);
 
-            // // Fill with white
-            // pixels.update_pixels().enumerate().for_each(|(idx, pixel)| {
-            //     println!("TEST: {} (color: {:?}", idx, pixel);
-            //     *pixel = Rgba::WHITE
-            // })
+    // // Write pixels
+    // graphics
+    //     .update_pixels(|mut pixels| {
+    //         pixels.rows_mut().for_each(|row| row.fill(255))
 
-            // for pixel in pixels.pixels() {
-            //     println!("{:?}", pixel);
-            // }
-        })
-        .await;
+    //         // pixels.set_color(0, 0, Rgba::BLACK);
+    //         // pixels.set_color(1, 0, Rgba::WHITE);
+    //         // pixels.set_color(2, 0, Rgba::BLACK);
+    //         // pixels.set_color(1, 1, Rgba::BLACK);
+
+    //         // // Fill with white
+    //         // pixels.update_pixels().enumerate().for_each(|(idx, pixel)| {
+    //         //     println!("TEST: {} (color: {:?}", idx, pixel);
+    //         //     *pixel = Rgba::WHITE
+    //         // })
+
+    //         // for pixel in pixels.pixels() {
+    //         //     println!("{:?}", pixel);
+    //         // }
+    //     })
+    //     .await;
 
     // Read pixels
     let pixels = graphics.pixels().await;
