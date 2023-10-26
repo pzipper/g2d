@@ -63,7 +63,7 @@ impl<'cx> Texture<'cx> {
 
     /// Transfers the pixels of this [Texture] to a buffer on the GPU.
     ///
-    /// Returns the buffer and the width of a row in it.
+    /// Returns the buffer and the width of a row in it.  The resulting buffer is already mapped.
     pub(crate) async fn texture_to_buffer(
         context: &'cx Context,
         wgpu_texture: &wgpu::Texture,

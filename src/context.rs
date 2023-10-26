@@ -17,7 +17,7 @@ impl Context {
             // TODO: support browser/WASM?
             backends: wgpu::Backends::all().difference(wgpu::Backends::BROWSER_WEBGPU),
             dx12_shader_compiler: Default::default(),
-            flags: wgpu::InstanceFlags::empty(),
+            flags: wgpu::InstanceFlags::debugging(),
             gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
         });
 

@@ -3,10 +3,11 @@
 //! This example performs the following operations:
 //! - Creates a blank texture on the GPU
 //! - Pulls the pixels from that texture onto the CPU
-//! -
+//! - Fills the texture with white pixels.
+//! - Fills
 
 use futures::executor::block_on;
-use g2d::math::{Dimension, Rgba};
+use g2d::math::Dimension;
 use image::RgbaImage;
 
 async fn run() {

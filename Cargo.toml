@@ -1,7 +1,10 @@
 [package]
 name = "g2d"
+description = "A simple library for hardware accelerated 2D rendering in Rust."
 version = "0.0.0"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/pzipper/g2d"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

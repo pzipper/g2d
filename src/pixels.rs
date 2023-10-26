@@ -67,7 +67,7 @@ impl<'a> PixelsMut<'a> {
     pub fn to_vec(&self) -> Vec<u8> {
         let mut vec = Vec::with_capacity(self.size.area() as usize);
 
-        for (idx, row) in self.rows().enumerate() {
+        for row in self.rows() {
             vec.extend_from_slice(row);
         }
 
