@@ -9,7 +9,7 @@
 use std::time::Instant;
 
 use futures::executor::block_on;
-use g2d::math::{Dimension, Rgba};
+use g2d::math::Dimension;
 use image::RgbaImage;
 
 async fn run() {
@@ -23,7 +23,7 @@ async fn run() {
 
     // Write pixels
     graphics
-        .pixels_mut(|mut pixels| {
+        .update_pixels(|mut pixels| {
             pixels.rows_mut().for_each(|row| row.fill(255))
 
             // pixels.set_color(0, 0, Rgba::BLACK);
@@ -32,7 +32,7 @@ async fn run() {
             // pixels.set_color(1, 1, Rgba::BLACK);
 
             // // Fill with white
-            // pixels.pixels_mut().enumerate().for_each(|(idx, pixel)| {
+            // pixels.update_pixels().enumerate().for_each(|(idx, pixel)| {
             //     println!("TEST: {} (color: {:?}", idx, pixel);
             //     *pixel = Rgba::WHITE
             // })

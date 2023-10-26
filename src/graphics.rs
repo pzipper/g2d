@@ -72,7 +72,7 @@ impl<'a> Graphics<'a> {
     ///
     /// NOTE: this method should be used sparingly as it moves data to and from the GPU, which can
     ///       be computationally expensive.
-    pub async fn pixels_mut<T>(&self, mut callback: impl FnMut(PixelsMut) -> T) -> T {
+    pub async fn update_pixels<T>(&self, mut callback: impl FnMut(PixelsMut) -> T) -> T {
         let buffer_row_width_bytes =
             self.wgpu_texture()
                 .width()
