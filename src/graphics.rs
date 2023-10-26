@@ -7,34 +7,33 @@ use crate::{
 
 /// The main struct for Graphics in G2d.
 #[derive(Debug)]
-pub struct Graphics<'cx, 'tex> {
-    /// The context used to create the [`wgpu::Texture`] for this [Graphics].
-    context: &'cx Context,
-
-    /// The WGPU texture to draw to.
-    wgpu_texture: &'tex wgpu::Texture,
+pub struct Graphics<'a> {
+    texture: &'a Texture<'a>,
 }
 
-impl<'cx, 'tex> Graphics<'cx, 'tex> {
-    /// Creates a [Graphics] instance for the provided WGPU texture.
+impl<'a> Graphics<'a> {
+    /// Creates a [Graphics] instance for the provided [Texture].
     #[inline]
-    pub fn from_raw_parts(context: &'cx Context, wgpu_texture: &'tex wgpu::Texture) -> Self {
-        Self {
-            context,
-            wgpu_texture,
-        }
+    pub fn from_raw_parts(texture: &'a Texture) -> Self {
+        Self { texture }
     }
 
-    /// Returns the [Context] used to create this [Texture].
+    /// Returns the texture that this [Graphics] instance will draw to.
+    #[inline]
+    pub fn texture(&self) -> &Texture {
+        self.texture
+    }
+
+    /// Returns the [Context] used by the [Graphics].
     #[inline]
     pub fn context(&self) -> &Context {
-        self.context
+        self.texture().context()
     }
 
-    /// Returns the WGPU texture that this [Texture] represents.
+    /// Returns the WGPU texture that is being written to.
     #[inline]
     pub fn wgpu_texture(&self) -> &wgpu::Texture {
-        self.wgpu_texture
+        self.texture().wgpu_texture()
     }
 
     /// Returns an immutable view into the pixels of the underlying texture.
@@ -70,6 +69,9 @@ impl<'cx, 'tex> Graphics<'cx, 'tex> {
 
     /// Accesses the raw pixels of the [Graphics], allowing the provided function to modify the
     /// texture on the GPU.
+    ///
+    /// NOTE: this method should be used sparingly as it moves data to and from the GPU, which can
+    ///       be computationally expensive.
     pub async fn pixels_mut<T>(&self, mut callback: impl FnMut(PixelsMut) -> T) -> T {
         let buffer_row_width_bytes =
             self.wgpu_texture()

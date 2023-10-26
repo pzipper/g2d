@@ -58,7 +58,7 @@ impl<'cx> Texture<'cx> {
     /// Creates a [Graphics] instance for this texture.
     #[inline]
     pub fn graphics(&self) -> Graphics {
-        Graphics::from_raw_parts(self.context(), &self.wgpu_texture)
+        Graphics::from_raw_parts(self)
     }
 
     /// Copies the data from this texture to a new buffer on the GPU.  The resulting buffer is
