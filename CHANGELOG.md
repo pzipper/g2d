@@ -1,6 +1,17 @@
 # Changelog
 
 ## [unreleased]
+
+### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## 0.0.1
 - refactor: rename `Graphics::pixels_mut` to `Graphics::update_pixels`
 - fix: No longer panic at the end of a program when `Context` is dropped
 - refactor: optimize `Graphics::update_pixels`
