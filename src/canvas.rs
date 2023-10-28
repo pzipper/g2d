@@ -19,12 +19,11 @@ impl<'a, H: Handle> Canvas<'a, H> {
         }
     }
 
-    /// Writes data directly to a texture.
+    /// Writes data directly to a [Texture].
     ///
     /// # Fails
     /// - Fails if the underlying data is too big or small.
-    /// - Fails if the texture doesn't have
-    /// [`COPY_DST`](wgpu::TextureUsages#associatedconstant.COPY_DST).
+    /// - Fails if the [Texture] doesn't have the `COPY_DST` usage.
     pub fn write(&self, data: &[u8]) -> Result<(), Error> {
         if !self
             .wgpu_texture_usage()
@@ -57,8 +56,7 @@ impl<'a, H: Handle> Canvas<'a, H> {
     /// Attempts to get the pixels of this [Texture].
     ///
     /// # Fails
-    /// - Fails if the texture doesn't have
-    /// [`COPY_SRC`](wgpu::TextureUsages#associatedconstant.COPY_SRC).
+    /// - Fails if the texture doesn't have the `COPY_SRC` usage.
     pub async fn pixels(&self) -> Result<Pixels, Error> {
         let mut wgpu_encoder = self
             .handle()
