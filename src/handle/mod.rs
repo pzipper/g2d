@@ -1,6 +1,8 @@
+mod window;
 mod windowless;
 
 use wgpu::{util::DeviceExt, TextureUsages};
+pub use window::*;
 pub use windowless::*;
 
 use crate::{Dimension, Error, OwnedTexture};

@@ -3,6 +3,7 @@ Any notable changes to G2d will be listed in this file.
 
 ## [unreleased]
 ### Added
+- `WindowHandle` (A G2d `Handle` implementation for drawing to a window).
 
 ### Fixed
 

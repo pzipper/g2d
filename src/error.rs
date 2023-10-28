@@ -13,4 +13,7 @@ pub enum Error {
 
     /// The [Texture](crate::Texture) didn't have the correct usage(s) for an operation.
     LackingTextureUsage(wgpu::TextureUsages),
+
+    /// The G2d [Handle](crate::Handle) failed to create a [`wgpu::Surface`] for its window.
+    FailedToCreateSurface(String),
 }
