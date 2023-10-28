@@ -16,3 +16,6 @@ raw-window-handle = "0.5.2" # TODO: support 0.6 when WGPU releases: https://gith
 [dev-dependencies]
 futures = "0.3.29"
 image = { version = "0.24.7", features = ["png"] }
+
+[workspace]
+members = ["examples/*"]

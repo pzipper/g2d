@@ -16,4 +16,7 @@ pub enum Error {
 
     /// The G2d [Handle](crate::Handle) failed to create a [`wgpu::Surface`] for its window.
     FailedToCreateSurface(String),
+
+    /// G2d failed to get the texture of a [`wgpu::Surface`].
+    FailedToGetSurfaceTexture(String),
 }

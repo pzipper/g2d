@@ -1,6 +1,6 @@
 use raw_window_handle::{HasRawDisplayHandle, HasRawWindowHandle};
 
-use crate::{Dimension, Error, Handle};
+use crate::{Dimension, Error, Frame, Handle};
 
 /// A [Handle] to the G2d API which is initialized for a specific window.
 #[derive(Debug)]
@@ -78,6 +78,20 @@ impl WindowHandle {
             self.wgpu_surface
                 .configure(&self.wgpu_device(), &self.wgpu_surface_config);
         }
+    }
+
+    /// Creates a [Frame] that can be used to draw to the window.
+    ///
+    /// # Fails
+    /// - Fails if a [Frame] is already alive.  TODO: verify: is true?
+    #[inline]
+    pub fn frame(&self) -> Result<Frame<'_, Self>, Error> {
+        Ok(Frame::from_raw_parts(
+            self,
+            self.wgpu_surface()
+                .get_current_texture()
+                .map_err(|err| Error::FailedToGetSurfaceTexture(err.to_string()))?,
+        ))
     }
 }
 
