@@ -1,14 +1,15 @@
-//! A 2D graphics library.
+#![doc = include_str!("../README.md")]
 
-mod context;
-mod graphics;
-pub mod math;
+mod canvas;
+mod dimension;
+mod error;
+mod handle;
 mod pixels;
 mod texture;
 
-pub use context::*;
-pub use graphics::*;
+pub use canvas::*;
+pub use dimension::*;
+pub use error::*;
+pub use handle::*;
 pub use pixels::*;
 pub use texture::*;
-
-pub use wgpu;

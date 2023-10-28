@@ -1,4 +1,4 @@
 # G2d
-> :warning: G2d is very much NOT ready for use, right now it's just a hobby project that may/may not work.
+> :warning: G2d is not ready for serious use yet! It's still in early development, it might be really buggy and missing some features.
 
-A simple library for hardware accelerated 2D rendering in Rust.
+A hardware-accelerated 2D graphics library written in pure Rust.

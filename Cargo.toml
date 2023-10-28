@@ -1,7 +1,7 @@
 [package]
 name = "g2d"
 description = "A simple library for hardware accelerated 2D rendering in Rust."
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/pzipper/g2d"
@@ -9,9 +9,9 @@ repository = "https://github.com/pzipper/g2d"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-futures = "0.3.28"
 futures-intrusive = "0.5.0"
-wgpu = "0.18.0"
+wgpu = "0.18"
 
-[dev_dependencies]
+[dev-dependencies]
+futures = "0.3.29"
 image = { version = "0.24.7", features = ["png"] }
