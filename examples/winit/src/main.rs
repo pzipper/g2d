@@ -1,5 +1,5 @@
 use futures::executor::block_on;
-use g2d::{Dimension, Handle, Texture};
+use g2d::{Dimension, Texture};
 use winit::{
     event::{Event, WindowEvent},
     event_loop::EventLoop,
