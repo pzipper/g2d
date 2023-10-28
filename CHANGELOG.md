@@ -7,6 +7,7 @@ Any notable changes to G2d will be listed in this file.
 - `Frame` API (for drawing to a window's surface).
 - Re-export `wgpu`
 - `Color`s
+- `Canvas::clear`
 
 ### Fixed
 

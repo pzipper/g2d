@@ -64,6 +64,11 @@ async fn run() {
                 // It's preferable for applications that do not render continuously to render in
                 // this event rather than in MainEventsCleared, since rendering in here allows
                 // the program to gracefully handle redraws requested by the OS.
+
+                // The current frame of the window.
+                let current_frame = handle.frame().unwrap();
+                current_frame.canvas().clear(g2d::Color::BLACK).unwrap();
+                current_frame.present();
             }
 
             _ => (),

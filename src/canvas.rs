@@ -1,4 +1,6 @@
-use crate::{Error, Handle, Pixels, Texture};
+use wgpu::TextureUsages;
+
+use crate::{Color, Error, Handle, Pixels, Texture};
 
 /// A view into a [Texture] used for reading or writing to it.
 #[derive(Debug)]
@@ -120,6 +122,51 @@ impl<'a, H: Handle> Canvas<'a, H> {
             .for_each(|row| pixel_data.extend_from_slice(&row[0..self.size().width as usize * 4]));
 
         Ok(Pixels::from_raw_parts(self.size(), pixel_data))
+    }
+
+    /// Clears this [Texture], filling it with the provided color.
+    ///
+    /// # Fails
+    /// - Fails if this [Texture] does not have the `RENDER_ATTACHMENT` usage.
+    pub fn clear(&self, color: Color) -> Result<(), Error> {
+        if !self
+            .wgpu_texture_usage()
+            .contains(TextureUsages::RENDER_ATTACHMENT)
+        {
+            return Err(Error::LackingTextureUsage(TextureUsages::RENDER_ATTACHMENT));
+        }
+
+        let wgpu_texture_view = self
+            .wgpu_texture()
+            .create_view(&wgpu::TextureViewDescriptor::default());
+
+        let mut encoder = self
+            .handle()
+            .wgpu_device()
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        // Begin the clear render pass.
+        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: None,
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &wgpu_texture_view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(color.to_wgpu_color()),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            depth_stencil_attachment: None,
+            timestamp_writes: None,
+            occlusion_query_set: None,
+        });
+
+        // Submit to be drawn.
+        self.handle()
+            .wgpu_queue()
+            .submit(std::iter::once(encoder.finish()));
+
+        Ok(())
     }
 }
 
