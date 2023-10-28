@@ -76,7 +76,7 @@ pub trait Handle: Sized {
         OwnedTexture::from_raw_parts(self, wgpu_texture)
     }
 
-    /// Creates a [Texture] with the provided size and data.
+    /// Creates a [Texture](crate::Texture) with the provided size and data.
     ///
     /// Expects the data to be in `Rgba8UnormSrgb`.
     ///
