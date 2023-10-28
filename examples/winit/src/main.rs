@@ -10,12 +10,16 @@ async fn run() {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_inner_size(winit::dpi::LogicalSize::new(1280, 720))
+        .with_visible(false)
         .build(&event_loop)
         .unwrap();
 
     let mut handle = g2d::WindowHandle::new(&window, g2d::Dimension::new(1280, 720))
         .await
         .unwrap();
+
+    // Set visible here to stop flashing white when it starts
+    window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
         // ControlFlow::Poll continuously runs the event loop, even if the OS hasn't
@@ -51,24 +55,11 @@ async fn run() {
             Event::MainEventsCleared => {
                 // Application update code.
 
-                // Queue a RedrawRequested event.
-                //
-                // You only need to call this if you've determined that you need to redraw, in
-                // applications which do not always need to. Applications that redraw continuously
-                // can just render here instead.
-                window.request_redraw();
-            }
-            Event::RedrawRequested(_) => {
-                // Redraw the application.
-                //
-                // It's preferable for applications that do not render continuously to render in
-                // this event rather than in MainEventsCleared, since rendering in here allows
-                // the program to gracefully handle redraws requested by the OS.
-
-                // The current frame of the window.
+                // Render frame
                 let current_frame = handle.frame().unwrap();
                 current_frame.canvas().clear(g2d::Color::BLACK).unwrap();
                 current_frame.present();
+                println!("FRAME");
             }
 
             _ => (),
