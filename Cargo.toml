@@ -1,6 +1,6 @@
 [package]
 name = "g2d"
-description = "A simple library for hardware accelerated 2D rendering in Rust."
+description = "A hardware-accelerated 2D graphics library written in pure Rust."
 version = "0.0.2"
 edition = "2021"
 license = "MIT"
