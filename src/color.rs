@@ -1,5 +1,6 @@
 /// Represents an RGBA color.
-#[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
+#[derive(bytemuck::Zeroable, bytemuck::Pod, Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
+#[repr(C)]
 pub struct Color {
     pub red: f64,
     pub green: f64,

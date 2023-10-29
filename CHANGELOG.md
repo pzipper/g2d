@@ -3,6 +3,8 @@ Any notable changes to G2d will be listed in this file.
 
 ## [unreleased]
 ### Added
+- `Vertex`
+- `VertexBuffer`
 
 ### Fixed
 

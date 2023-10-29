@@ -9,9 +9,10 @@ repository = "https://github.com/pzipper/g2d"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+bytemuck = { version = "1.14.0", features = ["derive"] }
 futures-intrusive = "0.5.0"
+raw-window-handle = "0.5.2"                              # TODO: support 0.6 when WGPU releases: https://github.com/gfx-rs/wgpu/pull/4202
 wgpu = "0.18"
-raw-window-handle = "0.5.2" # TODO: support 0.6 when WGPU releases: https://github.com/gfx-rs/wgpu/pull/4202
 
 [dev-dependencies]
 futures = "0.3.29"

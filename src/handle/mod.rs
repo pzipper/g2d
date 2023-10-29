@@ -1,11 +1,14 @@
 mod window;
 mod windowless;
 
-use wgpu::{util::DeviceExt, TextureUsages};
+use wgpu::{
+    util::{BufferInitDescriptor, DeviceExt},
+    TextureUsages,
+};
 pub use window::*;
 pub use windowless::*;
 
-use crate::{Dimension, Error, OwnedTexture};
+use crate::{Dimension, Error, OwnedTexture, Vertex, VertexBuffer};
 
 /// Creates a [`wgpu::Instance`] with the default settings for G2d.
 #[inline]
@@ -108,5 +111,18 @@ pub trait Handle: Sized {
         );
 
         Ok(OwnedTexture::from_raw_parts(self, wgpu_texture))
+    }
+
+    /// Creates a new [VertexBuffer], initialized with the provided data.
+    fn make_vertex_buffer(&self, data: &[Vertex]) -> VertexBuffer<'_, Self> {
+        let wgpu_buffer = self
+            .wgpu_device()
+            .create_buffer_init(&BufferInitDescriptor {
+                label: None,
+                contents: bytemuck::cast_slice(data),
+                usage: wgpu::BufferUsages::VERTEX,
+            });
+
+        VertexBuffer::from_raw_parts(self, wgpu_buffer)
     }
 }
