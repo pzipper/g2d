@@ -7,6 +7,7 @@ Any notable changes to G2d will be listed in this file.
 ### Fixed
 
 ### Changed
+- Use `f64` instead of `u8` in `Color`s.
 
 ## 0.0.3
 ### Added

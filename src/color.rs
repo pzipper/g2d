@@ -1,19 +1,19 @@
 /// Represents an RGBA color.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
 pub struct Color {
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8,
-    pub alpha: u8,
+    pub red: f64,
+    pub green: f64,
+    pub blue: f64,
+    pub alpha: f64,
 }
 
 impl Color {
-    pub const BLACK: Self = Self::new(0, 0, 0, 255);
-    pub const WHITE: Self = Self::new(255, 255, 255, 255);
+    pub const BLACK: Self = Self::new(0.0, 0.0, 0.0, 1.0);
+    pub const WHITE: Self = Self::new(1.0, 1.0, 1.0, 1.0);
 
     /// Creates a new [Color] from the provided red, green, blue and alpha channels.
     #[inline]
-    pub const fn new(red: u8, green: u8, blue: u8, alpha: u8) -> Self {
+    pub const fn new(red: f64, green: f64, blue: f64, alpha: f64) -> Self {
         Self {
             red,
             green,
@@ -22,27 +22,25 @@ impl Color {
         }
     }
 
-    /// Converts the red, green, blue and alpha channels of this [Color] to [f64]s.
+    /// Converts a [Color] to its associated RGBA bytes.
     #[inline]
-    pub fn to_floats(&self) -> (f64, f64, f64, f64) {
-        (
-            self.red as f64 / 255f64,
-            self.green as f64 / 255f64,
-            self.blue as f64 / 255f64,
-            self.alpha as f64 / 255f64,
-        )
+    pub fn to_rgba_bytes(&self) -> [u8; 4] {
+        [
+            (self.red.min(1.0) * 255.0) as u8,
+            (self.green.min(1.0) * 255.0) as u8,
+            (self.blue.min(1.0) * 255.0) as u8,
+            (self.alpha.min(1.0) * 255.0) as u8,
+        ]
     }
 
     /// Converts this [Color] to a [`wgpu::Color`].
     #[inline]
-    pub fn to_wgpu_color(&self) -> wgpu::Color {
-        let floats = self.to_floats();
-
+    pub const fn to_wgpu_color(&self) -> wgpu::Color {
         wgpu::Color {
-            r: floats.0,
-            g: floats.1,
-            b: floats.2,
-            a: floats.3,
+            r: self.red,
+            g: self.green,
+            b: self.blue,
+            a: self.alpha,
         }
     }
 }
