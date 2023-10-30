@@ -1,5 +1,21 @@
 use crate::{Handle, Vertex};
 
+/// The attributes for `wgpu_desc`.
+const WGPU_ATTRIBS: [wgpu::VertexAttribute; 3] = wgpu::vertex_attr_array![
+    0 => Float32x2,
+    1 => Float32x2,
+    2 => Float64x4
+];
+
+/// Returns the [`wgpu::VertexBufferLayout`] [VertexBuffer]s use.
+pub const fn wgpu_vertex_buffer_layout() -> wgpu::VertexBufferLayout<'static> {
+    wgpu::VertexBufferLayout {
+        array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
+        step_mode: wgpu::VertexStepMode::Vertex,
+        attributes: &WGPU_ATTRIBS,
+    }
+}
+
 /// A buffer of vertices, stored on the GPU.
 #[derive(Debug)]
 pub struct VertexBuffer<'a, H: Handle> {
@@ -8,33 +24,6 @@ pub struct VertexBuffer<'a, H: Handle> {
 }
 
 impl<'a, H: Handle> VertexBuffer<'a, H> {
-    /// Returns the [`wgpu::VertexBufferLayout`] [VertexBuffer]s use.
-    pub const WGPU_VERTEX_BUFFER_LAYOUT: wgpu::VertexBufferLayout<'static> =
-        wgpu::VertexBufferLayout {
-            array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
-            step_mode: wgpu::VertexStepMode::Vertex,
-            attributes: &[
-                // Position
-                wgpu::VertexAttribute {
-                    offset: 0,
-                    shader_location: 0,
-                    format: wgpu::VertexFormat::Float32x2,
-                },
-                // UV
-                wgpu::VertexAttribute {
-                    offset: std::mem::size_of::<[f32; 2]>() as wgpu::BufferAddress,
-                    shader_location: 1,
-                    format: wgpu::VertexFormat::Float32x2,
-                },
-                // Color
-                wgpu::VertexAttribute {
-                    offset: std::mem::size_of::<[f32; 4]>() as wgpu::BufferAddress,
-                    shader_location: 2,
-                    format: wgpu::VertexFormat::Float64x4,
-                },
-            ],
-        };
-
     /// Creates a [VertexBuffer] from its raw parts.
     ///
     /// The provided buffer should have been created with the provided [Handle].
