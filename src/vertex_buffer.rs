@@ -7,15 +7,6 @@ const WGPU_ATTRIBS: [wgpu::VertexAttribute; 3] = wgpu::vertex_attr_array![
     2 => Float64x4
 ];
 
-/// Returns the [`wgpu::VertexBufferLayout`] [VertexBuffer]s use.
-pub const fn wgpu_vertex_buffer_layout() -> wgpu::VertexBufferLayout<'static> {
-    wgpu::VertexBufferLayout {
-        array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
-        step_mode: wgpu::VertexStepMode::Vertex,
-        attributes: &WGPU_ATTRIBS,
-    }
-}
-
 /// A buffer of vertices, stored on the GPU.
 #[derive(Debug)]
 pub struct VertexBuffer<'a, H: Handle> {
@@ -24,6 +15,15 @@ pub struct VertexBuffer<'a, H: Handle> {
 }
 
 impl<'a, H: Handle> VertexBuffer<'a, H> {
+    /// Returns the [`wgpu::VertexBufferLayout`] [VertexBuffer]s use.
+    pub const fn wgpu_desc() -> wgpu::VertexBufferLayout<'static> {
+        wgpu::VertexBufferLayout {
+            array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
+            step_mode: wgpu::VertexStepMode::Vertex,
+            attributes: &WGPU_ATTRIBS,
+        }
+    }
+
     /// Creates a [VertexBuffer] from its raw parts.
     ///
     /// The provided buffer should have been created with the provided [Handle].
