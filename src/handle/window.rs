@@ -1,6 +1,6 @@
 use raw_window_handle::{HasRawDisplayHandle, HasRawWindowHandle};
 
-use crate::{Dimension, Error, Frame, Handle};
+use crate::{Dimension, Error, Frame, Handle, Paint};
 
 /// A [Handle] to the G2d API which is initialized for a specific window.
 #[derive(Debug)]
@@ -10,6 +10,9 @@ pub struct WindowHandle {
     surface_size: Dimension,
     wgpu_device: wgpu::Device,
     wgpu_queue: wgpu::Queue,
+
+    // Render pipelines for different paints
+    paint_fill_pipeline: wgpu::RenderPipeline,
 }
 
 impl WindowHandle {
@@ -52,6 +55,8 @@ impl WindowHandle {
         wgpu_surface.configure(&wgpu_device, &wgpu_surface_config);
 
         Ok(Self {
+            paint_fill_pipeline: super::paint_fill_pipeline(&wgpu_device),
+
             wgpu_surface,
             wgpu_surface_config,
             surface_size,
@@ -102,5 +107,11 @@ impl Handle for WindowHandle {
 
     fn wgpu_queue(&self) -> &wgpu::Queue {
         &self.wgpu_queue
+    }
+
+    fn wgpu_render_pipeline_for_paint(&self, paint: &Paint) -> &wgpu::RenderPipeline {
+        match paint {
+            Paint::Fill => &self.paint_fill_pipeline,
+        }
     }
 }

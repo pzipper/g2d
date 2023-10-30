@@ -1,5 +1,5 @@
 use futures::executor::block_on;
-use g2d::{Dimension, Texture};
+use g2d::{Dimension, Handle, Texture};
 use winit::{
     event::{Event, WindowEvent},
     event_loop::EventLoop,
@@ -55,9 +55,32 @@ async fn run() {
             Event::MainEventsCleared => {
                 // Application update code.
 
+                let triangle_buffer = handle.make_vertex_buffer(&[
+                    g2d::Vertex::new(
+                        g2d::Vec2::new(0.0, 0.0),
+                        g2d::Vec2::default(),
+                        g2d::Color::WHITE,
+                    ),
+                    g2d::Vertex::new(
+                        g2d::Vec2::new(-0.5, -0.5),
+                        g2d::Vec2::default(),
+                        g2d::Color::BLACK,
+                    ),
+                    g2d::Vertex::new(
+                        g2d::Vec2::new(0.5, -0.5),
+                        g2d::Vec2::default(),
+                        g2d::Color::BLACK,
+                    ),
+                ]);
+
                 // Render frame
                 let current_frame = handle.frame().unwrap();
                 current_frame.canvas().clear(g2d::Color::BLACK).unwrap();
+                current_frame
+                    .canvas()
+                    .draw_vertices(&triangle_buffer, g2d::Paint::Fill)
+                    .unwrap();
+
                 current_frame.present();
                 println!("FRAME");
             }

@@ -1,6 +1,6 @@
 use wgpu::TextureUsages;
 
-use crate::{Color, Error, Handle, Pixels, Texture};
+use crate::{Color, Error, Handle, Paint, Pixels, Texture, VertexBuffer};
 
 /// A view into a [Texture] used for reading or writing to it.
 #[derive(Debug)]
@@ -136,14 +136,14 @@ impl<'a, H: Handle> Canvas<'a, H> {
             return Err(Error::LackingTextureUsage(TextureUsages::RENDER_ATTACHMENT));
         }
 
-        let wgpu_texture_view = self
-            .wgpu_texture()
-            .create_view(&wgpu::TextureViewDescriptor::default());
-
         let mut encoder = self
             .handle()
             .wgpu_device()
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        let wgpu_texture_view = self
+            .wgpu_texture()
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
         // Begin the clear render pass.
         encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -160,6 +160,54 @@ impl<'a, H: Handle> Canvas<'a, H> {
             timestamp_writes: None,
             occlusion_query_set: None,
         });
+
+        // Submit to be drawn.
+        self.handle()
+            .wgpu_queue()
+            .submit(std::iter::once(encoder.finish()));
+
+        Ok(())
+    }
+
+    /// Draws the vertices in the provided [VertexBuffer] with the provided [Paint].
+    pub fn draw_vertices(&self, vertices: &VertexBuffer<'_, H>, paint: Paint) -> Result<(), Error> {
+        if !self
+            .wgpu_texture_usage()
+            .contains(TextureUsages::RENDER_ATTACHMENT)
+        {
+            return Err(Error::LackingTextureUsage(TextureUsages::RENDER_ATTACHMENT));
+        }
+
+        let mut encoder = self
+            .handle()
+            .wgpu_device()
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        let wgpu_texture_view = self
+            .wgpu_texture()
+            .create_view(&wgpu::TextureViewDescriptor::default());
+
+        {
+            // Begin the render pass.
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: None,
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &wgpu_texture_view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+
+            render_pass.set_pipeline(&self.handle().wgpu_render_pipeline_for_paint(&paint));
+            render_pass.set_vertex_buffer(0, vertices.wgpu_buffer().slice(..));
+            render_pass.draw(0..vertices.len() as u32, 0..1);
+        }
 
         // Submit to be drawn.
         self.handle()

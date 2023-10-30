@@ -1,7 +1,7 @@
 use crate::{Color, Vec2};
 
 /// An individual piece of vertex data.
-#[derive(bytemuck::Zeroable, bytemuck::Pod, Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[derive(bytemuck::Zeroable, bytemuck::Pod, Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
 #[repr(C)]
 pub struct Vertex {
     /// The on-screen position of the vertex.
@@ -18,4 +18,16 @@ pub struct Vertex {
     ///
     /// Ignored if the
     pub color: Color,
+}
+
+impl Vertex {
+    /// Creates a [Vertex] with the provided *position*, *uv* and *color*.
+    #[inline]
+    pub fn new(position: Vec2, uv: Vec2, color: Color) -> Self {
+        Self {
+            position,
+            uv,
+            color,
+        }
+    }
 }

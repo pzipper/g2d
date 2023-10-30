@@ -8,7 +8,7 @@ use wgpu::{
 pub use window::*;
 pub use windowless::*;
 
-use crate::{Dimension, Error, OwnedTexture, Vertex, VertexBuffer};
+use crate::{Dimension, Error, OwnedTexture, Paint, Vertex, VertexBuffer};
 
 /// Creates a [`wgpu::Instance`] with the default settings for G2d.
 #[inline]
@@ -53,6 +53,68 @@ pub(crate) async fn request_wgpu_device(
         )
         .await
         .map_err(|err| Error::FailedToAcquireDevice(err.to_string()))
+}
+
+/// Creates a [`wgpu::RenderPipeline`] for with the provided options.
+pub(crate) fn create_wgpu_render_pipeline(
+    wgpu_device: &wgpu::Device,
+    wgpu_render_pipeline_layout: &wgpu::PipelineLayout,
+    wgpu_shader: &wgpu::ShaderModule,
+) -> wgpu::RenderPipeline {
+    wgpu_device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Render Pipeline"),
+        layout: Some(wgpu_render_pipeline_layout),
+        vertex: wgpu::VertexState {
+            module: &wgpu_shader,
+            entry_point: "vs_main",
+            // NOTE: the kind of [Handle] does not affect the layout of a [VertexBuffer].  It is
+            //       simply needed to access the `wgpu_desc` method.
+            buffers: &[VertexBuffer::<WindowlessHandle>::wgpu_desc()],
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: &wgpu_shader,
+            entry_point: "fs_main",
+            targets: &[Some(wgpu::ColorTargetState {
+                format: wgpu::TextureFormat::Bgra8UnormSrgb,
+                blend: Some(wgpu::BlendState::REPLACE),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            strip_index_format: None,
+            front_face: wgpu::FrontFace::Ccw,
+            cull_mode: Some(wgpu::Face::Back),
+            // Setting this to anything other than Fill requires Features::NON_FILL_POLYGON_MODE
+            polygon_mode: wgpu::PolygonMode::Fill,
+            // Requires Features::DEPTH_CLIP_CONTROL
+            unclipped_depth: false,
+            // Requires Features::CONSERVATIVE_RASTERIZATION
+            conservative: false,
+        },
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState {
+            count: 1,
+            mask: !0,
+            alpha_to_coverage_enabled: false,
+        },
+        multiview: None,
+    })
+}
+
+/// Creates a [`wgpu::RenderPipeline`] for rendering basic color-filled shapes.
+pub(crate) fn paint_fill_pipeline(wgpu_device: &wgpu::Device) -> wgpu::RenderPipeline {
+    let wgpu_shader =
+        wgpu_device.create_shader_module(wgpu::include_wgsl!("../shaders/paint_fill.wgsl"));
+
+    let wgpu_render_pipeline_layout =
+        wgpu_device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("Render Pipeline Layout"),
+            bind_group_layouts: &[],
+            push_constant_ranges: &[],
+        });
+
+    create_wgpu_render_pipeline(wgpu_device, &wgpu_render_pipeline_layout, &wgpu_shader)
 }
 
 /// A handle to the G2d API.
@@ -123,6 +185,9 @@ pub trait Handle: Sized {
                 usage: wgpu::BufferUsages::VERTEX,
             });
 
-        VertexBuffer::from_raw_parts(self, wgpu_buffer)
+        VertexBuffer::from_raw_parts(self, wgpu_buffer, data.len() as wgpu::BufferAddress)
     }
+
+    /// Returns the [`wgpu::RenderPipeline`] for the provided [Paint] type.
+    fn wgpu_render_pipeline_for_paint(&self, paint: &Paint) -> &wgpu::RenderPipeline;
 }

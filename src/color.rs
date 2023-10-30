@@ -2,10 +2,10 @@
 #[derive(bytemuck::Zeroable, bytemuck::Pod, Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
 #[repr(C)]
 pub struct Color {
-    pub red: f64,
-    pub green: f64,
-    pub blue: f64,
-    pub alpha: f64,
+    pub red: f32,
+    pub green: f32,
+    pub blue: f32,
+    pub alpha: f32,
 }
 
 impl Color {
@@ -14,7 +14,7 @@ impl Color {
 
     /// Creates a new [Color] from the provided red, green, blue and alpha channels.
     #[inline]
-    pub const fn new(red: f64, green: f64, blue: f64, alpha: f64) -> Self {
+    pub const fn new(red: f32, green: f32, blue: f32, alpha: f32) -> Self {
         Self {
             red,
             green,
@@ -38,10 +38,10 @@ impl Color {
     #[inline]
     pub const fn to_wgpu_color(&self) -> wgpu::Color {
         wgpu::Color {
-            r: self.red,
-            g: self.green,
-            b: self.blue,
-            a: self.alpha,
+            r: self.red as f64,
+            g: self.green as f64,
+            b: self.blue as f64,
+            a: self.alpha as f64,
         }
     }
 }
